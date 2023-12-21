@@ -1,5 +1,5 @@
 # Kafka
-Video Link: [Apache Kafka Crash Course | What is Kafka?](https://youtu.be/ZJJHm_bd9Zo)
+
 ## Prerequisite
 - Knowledge
   - Node.JS Intermediate level
@@ -44,16 +44,16 @@ async function init() {
   admin.connect();
   console.log("Adming Connection Success...");
 
-  console.log("Creating Topic [rider-updates]");
+  console.log("Creating Topic [event-update-topic]");
   await admin.createTopics({
     topics: [
       {
-        topic: "rider-updates",
+        topic: "event-update-topic",
         numPartitions: 2,
       },
     ],
   });
-  console.log("Topic Created Success [rider-updates]");
+  console.log("Topic Created Success [event-update-topic]");
 
   console.log("Disconnecting Admin..");
   await admin.disconnect();
@@ -84,7 +84,7 @@ async function init() {
   rl.on("line", async function (line) {
     const [riderName, location] = line.split(" ");
     await producer.send({
-      topic: "rider-updates",
+      topic: "event-update-topic",
       messages: [
         {
           partition: location.toLowerCase() === "north" ? 0 : 1,
@@ -109,7 +109,7 @@ async function init() {
   const consumer = kafka.consumer({ groupId: group });
   await consumer.connect();
 
-  await consumer.subscribe({ topics: ["rider-updates"], fromBeginning: true });
+  await consumer.subscribe({ topics: ["event-update-topic"], fromBeginning: true });
 
   await consumer.run({
     eachMessage: async ({ topic, partition, message, heartbeat, pause }) => {
